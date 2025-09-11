@@ -58,6 +58,13 @@ class Game {
             this.player.Yvelocity = -this.player.Yvelocity;
         }
 
+        // Coins testing / debug
+        if (this.currentTime >= 30) {
+            for (let i = 0; i < this.coins.length; i++) {
+                this.coins[i].render = false;
+            }
+        }
+
         // Convert player world position to pixel position
         this.player.pixelX = this.player.worldX * 10;
         this.player.pixelY = (600 - this.player.worldY * 10) - this.player.height;
@@ -85,6 +92,7 @@ class Coin {
         this.img.src = 'coin.png';
         // Collection Data
         this.render = true;
+        // Add to coins list in the game class so that it may be used throughout the game class functions
         game.coins.push(this);
     }
 
