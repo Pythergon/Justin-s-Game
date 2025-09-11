@@ -1,7 +1,7 @@
 // Get Canvas Details
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
-const myButton = document.getElementById('myButton');
+const button = document.getElementById("myButton");
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -14,28 +14,31 @@ class Game {
         this.player = undefined;
         this.coins = [];
         this.running = true;
+        // Stage information
+        this.stageTime = 30;
     }
 
     handleInput() {
+        const playerSpeed = 3;
         if (keyState['d']) {
-            this.player.Xvelocity = 1;
+            this.player.Xvelocity = 1 * playerSpeed;
             this.player.Yvelocity = 0;
         } else if (keyState['a']) {
-            this.player.Xvelocity = -1;
+            this.player.Xvelocity = -1 * playerSpeed;
             this.player.Yvelocity = 0;
         } else if (keyState['w']){
             this.player.Xvelocity = 0;
-            this.player.Yvelocity = 1;
+            this.player.Yvelocity = 1 * playerSpeed;
         } else if (keyState['s']) {
             this.player.Xvelocity = 0;
-            this.player.Yvelocity = -1;
+            this.player.Yvelocity = -1 * playerSpeed;
         }
     }
 
     update(deltaTime) {
         // Update Time
         this.currentTime += deltaTime;
-        console.log(this.currentTime);
+        this.stageTime -= deltaTime;
 
         // Update Player Position
         this.player.worldX += this.player.Xvelocity;
@@ -59,13 +62,6 @@ class Game {
             this.player.Yvelocity = -this.player.Yvelocity;
         }
 
-        // Coins testing / debug
-        if (this.currentTime >= 30) {
-            for (let i = 0; i < this.coins.length; i++) {
-                this.coins[i].render = false;
-            }
-        }
-
         // Convert player world position to pixel position
         this.player.pixelX = this.player.worldX * 10;
         this.player.pixelY = (600 - this.player.worldY * 10) - this.player.height;
@@ -75,7 +71,8 @@ class Game {
         this.drawCanvas.clearRect(0, 0, canvas.width, canvas.height);
         this.drawCanvas.font = "bold 32px Arial";
         this.drawCanvas.fillStyle = 'black';
-        this.drawCanvas.fillText(`Time Elapsed (seconds): ${Number(this.currentTime.toFixed(2))}`, 10, 30);
+        // this.drawCanvas.fillText(`Time Elapsed (seconds): ${Number(this.currentTime.toFixed(2))}`, 10, 30);
+        this.drawCanvas.fillText(`Seconds Left: ${Number(this.stageTime.toFixed(1))}`, 10, 30);
         for (let i = 0; i < this.coins.length; i++) {
             this.coins[i].draw(this.drawCanvas);
         }
@@ -159,4 +156,8 @@ function gameLoop(currentTime) {
 }
 
 // Start the loop
-requestAnimationFrame(gameLoop);
+
+button.addEventListener('click', event => {
+    alert("You have 10 seconds to collect all the coins!");
+    requestAnimationFrame(gameLoop);
+});
