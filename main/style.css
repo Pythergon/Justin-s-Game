@@ -12,3 +12,10 @@ canvas {
     margin: 0 auto;
     border: 2px solid black;
 }
+
+button {
+    color: white;
+    background-color: cadetblue;
+    padding: 3px;
+
+}

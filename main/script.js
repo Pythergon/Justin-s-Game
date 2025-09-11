@@ -1,6 +1,7 @@
 // Get Canvas Details
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
+const myButton = document.getElementById('myButton');
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -140,6 +141,7 @@ var myPlayer = new Player(myGame, 10, 0);
 
 for (let i = 0; i < 10; i++) {
     let newCoin = new Coin(myGame, getRandomInt(800), getRandomInt(600));
+    // newCoin.render = false;
 }
 
 // Game Loop
