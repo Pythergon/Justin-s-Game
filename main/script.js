@@ -16,6 +16,7 @@ class Game {
         this.running = true;
         // Stage information
         this.stageTime = 30;
+        this.won = false;
     }
 
     handleInput() {
@@ -36,6 +37,12 @@ class Game {
     }
 
     update(deltaTime) {
+        // Check if won!
+        if (this.player.coinCount >= this.coins.length) {
+            this.won = true;
+            console.log("you won!");
+        }
+
         // Update Time
         this.currentTime += deltaTime;
         this.stageTime -= deltaTime;
@@ -62,6 +69,21 @@ class Game {
             this.player.Yvelocity = -this.player.Yvelocity;
         }
 
+        // Coin Collecting
+        for (let i = 0; i < this.coins.length; i++) {
+            if (
+                (!this.coins[i].collected) &&
+                (this.coins[i].centerX >= this.player.pixelX) &&
+                (this.coins[i].centerX <= this.player.pixelX + this.player.width) &&
+                (this.coins[i].centerY >= this.player.pixelY) &&
+                (this.coins[i].centerY <= this.player.pixelY + this.player.height)
+        ) {
+                this.coins[i].render = false;
+                this.coins[i].collected = true;
+                this.player.coinCount++;
+            }
+        }
+
         // Convert player world position to pixel position
         this.player.pixelX = this.player.worldX * 10;
         this.player.pixelY = (600 - this.player.worldY * 10) - this.player.height;
@@ -73,6 +95,10 @@ class Game {
         this.drawCanvas.fillStyle = 'black';
         // this.drawCanvas.fillText(`Time Elapsed (seconds): ${Number(this.currentTime.toFixed(2))}`, 10, 30);
         this.drawCanvas.fillText(`Seconds Left: ${Number(this.stageTime.toFixed(1))}`, 10, 30);
+        this.drawCanvas.fillText(`Coins Collected: ${this.player.coinCount} / ${this.coins.length}`, 400, 30);
+        if (this.won) {
+            this.drawCanvas.fillText("You Won!", this.drawCanvas.width / 2, this.drawCanvas.height / 2);
+        }
         for (let i = 0; i < this.coins.length; i++) {
             this.coins[i].draw(this.drawCanvas);
         }
@@ -85,11 +111,14 @@ class Coin {
         // Positional Data
         this.pixelX = pixelX;
         this.pixelY = pixelY;
+        this.centerX = pixelX + (10 / 2);
+        this.centerY = pixelY + (10 / 2);
         // Image Data
         this.img = new Image();
         this.img.src = 'coin.png';
         // Collection Data
         this.render = true;
+        this.collected = false;
         // Add to coins list in the game class so that it may be used throughout the game class functions
         game.coins.push(this);
     }
@@ -113,6 +142,8 @@ class Player {
         // Velocity Data
         this.Xvelocity = 0;
         this.Yvelocity = 0;
+        // Coin data
+        this.coinCount = 0;
         // Add player to game and game state
         game.player = this;
     }
@@ -156,7 +187,8 @@ function gameLoop(currentTime) {
 }
 
 // Start the loop
-
+// requestAnimationFrame(gameLoop);
+// With button
 button.addEventListener('click', event => {
     alert("You have 10 seconds to collect all the coins!");
     requestAnimationFrame(gameLoop);
