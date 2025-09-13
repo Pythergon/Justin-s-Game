@@ -7,6 +7,10 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
+function getCoinPos(num) {
+    return 3 + Math.floor(Math.random() * num - 5);
+}
+
 class Game {
     constructor(drawCanvas) {
         this.drawCanvas = drawCanvas;
@@ -20,7 +24,7 @@ class Game {
     }
 
     handleInput() {
-        const playerSpeed = 3;
+        const playerSpeed = 2;
         if (keyState['d']) {
             this.player.Xvelocity = 1 * playerSpeed;
             this.player.Yvelocity = 0;
@@ -144,13 +148,17 @@ class Player {
         this.Yvelocity = 0;
         // Coin data
         this.coinCount = 0;
+        // Picture Data
+        this.img = new Image();
+        this.img.src = 'character2.png';
         // Add player to game and game state
         game.player = this;
     }
 
     draw(drawCanvas) {
-        drawCanvas.fillStyle = 'red';
-        drawCanvas.fillRect(this.pixelX, this.pixelY, this.width, this.height);
+        // drawCanvas.fillStyle = 'red';
+        // drawCanvas.fillRect(this.pixelX, this.pixelY, this.width, this.height);
+        drawCanvas.drawImage(this.img, this.pixelX, this.pixelY);
     }
 }
 
@@ -168,9 +176,12 @@ var myGame = new Game(ctx);
 var myPlayer = new Player(myGame, 10, 0);
 
 for (let i = 0; i < 10; i++) {
-    let newCoin = new Coin(myGame, getRandomInt(800), getRandomInt(600));
+    let newCoin = new Coin(myGame, getCoinPos(800), getCoinPos(600));
     // newCoin.render = false;
 }
+
+// Initial Render
+myGame.render();
 
 // Game Loop
 let lastTime = 0;
@@ -190,6 +201,6 @@ function gameLoop(currentTime) {
 // requestAnimationFrame(gameLoop);
 // With button
 button.addEventListener('click', event => {
-    alert("You have 10 seconds to collect all the coins!");
     requestAnimationFrame(gameLoop);
+    myPlayer.Xvelocity = 1;
 });
