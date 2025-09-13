@@ -1,10 +1,15 @@
+@font-face {
+    font-family: 'PressStart2P';
+    src: url("C:\Users\jared\WebstormProjects\Justin-s-Game\font\p2start\PressStart2P-vaV7.ttf") format('truetype');
+}
+
 body {
     background-color: white; /* dark background for contrast */
     color: gray;           /* makes all text white by default */
     text-align: center;     /* centers headings above canvas */
-    font-family: sans-serif;
     margin: 0;
     padding: 20px;
+    font-family: 'PressStart2P', sans-serif;
 }
 
 canvas {

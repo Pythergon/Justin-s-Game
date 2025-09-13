@@ -8,7 +8,7 @@ function getRandomInt(max) {
 }
 
 function getCoinPos(num) {
-    return 3 + Math.floor(Math.random() * num - 5);
+    return 20 + Math.floor(Math.random() * num - 20);
 }
 
 class Game {
@@ -101,7 +101,8 @@ class Game {
         this.drawCanvas.fillText(`Seconds Left: ${Number(this.stageTime.toFixed(1))}`, 10, 30);
         this.drawCanvas.fillText(`Coins Collected: ${this.player.coinCount} / ${this.coins.length}`, 400, 30);
         if (this.won) {
-            this.drawCanvas.fillText("You Won!", this.drawCanvas.width / 2, this.drawCanvas.height / 2);
+            this.drawCanvas.font = "128px Arial";
+            this.drawCanvas.fillText("You Won!", 150, 300);
         }
         for (let i = 0; i < this.coins.length; i++) {
             this.coins[i].draw(this.drawCanvas);
