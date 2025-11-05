@@ -2,6 +2,7 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const button = document.getElementById("myButton");
+const stopButton = document.getElementById("Stop");
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -19,24 +20,38 @@ class Game {
         this.coins = [];
         this.running = true;
         // Stage information
-        this.stageTime = 30;
+        this.stageTime = 25;
         this.won = false;
     }
 
     handleInput() {
-        const playerSpeed = 2;
-        if (keyState['d']) {
-            this.player.Xvelocity = 1 * playerSpeed;
-            this.player.Yvelocity = 0;
-        } else if (keyState['a']) {
-            this.player.Xvelocity = -1 * playerSpeed;
-            this.player.Yvelocity = 0;
-        } else if (keyState['w']){
-            this.player.Xvelocity = 0;
-            this.player.Yvelocity = 1 * playerSpeed;
-        } else if (keyState['s']) {
-            this.player.Xvelocity = 0;
-            this.player.Yvelocity = -1 * playerSpeed;
+        const playerSpeed = 1.6;
+        if (
+            (this.player.worldX <= 0) || // Left
+            (this.player.worldX >= 80 - (this.player.width / 10)) || // Right
+            (this.player.worldY <= 0) || // Top
+            (this.player.worldY >= 60 - (this.player.height / 10)) // Bottom
+        ) {
+            console.log("Touched Wall in Handle Input");
+            this.player.touchingWall = true;
+        } else {
+            this.player.touchingWall = false;
+        }
+
+        if (this.player.touchingWall) {
+            if (keyState['d']) {
+                this.player.Xvelocity = 1 * playerSpeed;
+                this.player.Yvelocity = 0;
+            } else if (keyState['a']) {
+                this.player.Xvelocity = -1 * playerSpeed;
+                this.player.Yvelocity = 0;
+            } else if (keyState['w']){
+                this.player.Xvelocity = 0;
+                this.player.Yvelocity = 1 * playerSpeed;
+            } else if (keyState['s']) {
+                this.player.Xvelocity = 0;
+                this.player.Yvelocity = -1 * playerSpeed;
+            }
         }
     }
 
@@ -56,10 +71,10 @@ class Game {
         this.player.worldY += this.player.Yvelocity;
 
         // Left-Right Border collision detection
-        if (this.player.worldX < 0) {
+        if (this.player.worldX < 0) { // Left
             this.player.worldX = 0;
             this.player.Xvelocity = -this.player.Xvelocity;
-        } else if (this.player.worldX > 80 - (this.player.width / 10)) {
+        } else if (this.player.worldX > 80 - (this.player.width / 10)) { // Right
             this.player.worldX = 80 - (this.player.width / 10);
             this.player.Xvelocity = -this.player.Xvelocity;
         }
@@ -95,14 +110,19 @@ class Game {
 
     render() {
         this.drawCanvas.clearRect(0, 0, canvas.width, canvas.height);
-        this.drawCanvas.font = "bold 32px Arial";
         this.drawCanvas.fillStyle = 'black';
+        this.drawCanvas.font = "bold 32px Arial";
         // this.drawCanvas.fillText(`Time Elapsed (seconds): ${Number(this.currentTime.toFixed(2))}`, 10, 30);
         this.drawCanvas.fillText(`Seconds Left: ${Number(this.stageTime.toFixed(1))}`, 10, 30);
         this.drawCanvas.fillText(`Coins Collected: ${this.player.coinCount} / ${this.coins.length}`, 400, 30);
         if (this.won) {
             this.drawCanvas.font = "128px Arial";
             this.drawCanvas.fillText("You Won!", 150, 300);
+        }
+        if (this.stageTime <= 0) {
+            this.drawCanvas.font = "128px Arial";
+            this.drawCanvas.fillText("You Lost!", 150, 300);
+            this.running = false;
         }
         for (let i = 0; i < this.coins.length; i++) {
             this.coins[i].draw(this.drawCanvas);
@@ -144,6 +164,7 @@ class Player {
         this.height = 65;
         this.pixelX = worldX * 10; // math
         this.pixelY = (600 - worldY * 10) - this.height; // math
+        this.touchingWall = false;
         // Velocity Data
         this.Xvelocity = 0;
         this.Yvelocity = 0;
@@ -195,7 +216,9 @@ function gameLoop(currentTime) {
     myGame.render();
 
     // Re-queue the game loop
-    requestAnimationFrame(gameLoop);
+    if (!myGame.won && myGame.running) {
+        requestAnimationFrame(gameLoop);
+    }
 }
 
 // Start the loop
@@ -205,3 +228,8 @@ button.addEventListener('click', event => {
     requestAnimationFrame(gameLoop);
     myPlayer.Xvelocity = 1;
 });
+
+stopButton.addEventListener('click', event => {
+    myGame.running = false;
+})
+
