@@ -104,8 +104,8 @@ class Game {
         }
 
         // Convert player world position to pixel position
-        this.player.pixelX = this.player.worldX * 10;
-        this.player.pixelY = (600 - this.player.worldY * 10) - this.player.height;
+        this.player.pixelX = int(this.player.worldX * 10);
+        this.player.pixelY = int((600 - this.player.worldY * 10) - this.player.height);
     }
 
     render() {
